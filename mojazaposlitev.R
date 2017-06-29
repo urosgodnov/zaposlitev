@@ -4,9 +4,18 @@ library(xlsx)
 
 dir.create(file.path("podatki"), showWarnings = FALSE)
 
-podatki<-as.list(rep(NA, 1290))
+#koliko je max podstrani
+url<-"https://www.mojazaposlitev.si/prosta-delovna-mesta?keywords=&podrocja=&regije=&izobrazba=&cas_objave=&delodajalec=&_action=I%C5%A1%C4%8Di+med+prostimi+deli"
+max<- url %>% read_html()%>% html_nodes(".pagination")%>% html_text()
 
-for (i in seq(from=0, to=1290, by=10)) {
+max<-regmatches(max, gregexpr("[[:digit:]]+", max))
+
+max<-max(as.numeric(unlist(max)))
+
+
+podatki<-as.list(rep(NA, max*10))
+
+for (i in seq(from=0, to=(max*10), by=10)) {
 
 print(i)
   
