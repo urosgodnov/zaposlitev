@@ -4,9 +4,17 @@ library(xlsx)
 
 dir.create(file.path("podatki"), showWarnings = FALSE)
 
-podatki<-as.list(rep(NA, 1615))
+#koliko je max podstrani
+url<-"https://www.mojedelo.com/prosta-delovna-mesta/vsa-podrocja"
+max<- url %>% read_html()%>% html_nodes(".list-bottom")%>% html_text()
 
-for (i in seq(from=1, to=81, by=1)) {
+max<-regmatches(max, gregexpr("[[:digit:]]+", max))
+
+max<-as.numeric(max[[1]][[2]])
+
+podatki<-as.list(rep(NA, max*20))
+
+for (i in seq(from=1, to=max, by=1)) {
   
   print(i)
   
