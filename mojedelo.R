@@ -3,7 +3,7 @@ library(lubridate)
 library(xlsx)
 
 dir.create(file.path("podatki"), showWarnings = FALSE)
-
+start<-Sys.time()
 #koliko je max podstrani
 url<-"https://www.mojedelo.com/prosta-delovna-mesta/vsa-podrocja"
 max<- url %>% read_html()%>% html_nodes(".list-bottom")%>% html_text()
@@ -43,7 +43,7 @@ tidyy<-lapply(podatki,function(x) {
   
   t<-x%>%html_nodes(".detail")%>%html_text()
   
-  
+  stran<-"mojedelo.si"
   naziv<-x%>%html_node(".title")%>%html_text()
   
   podjetje<-t[2]
@@ -55,8 +55,10 @@ tidyy<-lapply(podatki,function(x) {
   opis<-x%>%html_nodes("p")%>%html_text("premiumDescription")
   
   opis<-ifelse(length(opis)>0,opis,"")
+  podrobno<-""
+  nedolocen<-"Ni podatka"
   
-  return(data.frame(naziv,podjetje,datum,kraj,opis, stringsAsFactors = FALSE))
+  return(data.frame(stran,naziv,podjetje,datum,kraj,opis,podrobno,nedolocen, stringsAsFactors = FALSE))
   }
   
   
@@ -68,3 +70,7 @@ final<-do.call(rbind, tidyy)
 save(final, file="./podatki/MojeDelo.Rda")
 
 write.xlsx(final, file="./podatki/MojeDelo.xlsx",sheetName="Podatki")
+
+konec<-Sys.time()-start
+
+print(paste("Preteklo je ",as.character(konec),sep=""))
