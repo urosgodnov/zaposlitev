@@ -36,7 +36,9 @@ for (j in 1:length(podatkiAll))  {
 
 #Obdelava posameznih elementov
 tidyy<-lapply(podatki,function(x) {
+ 
   
+  if (!is.na(x)) {
   t<-x%>%html_nodes("span")%>%html_text("class")
   
   naziv<-x%>%html_node("a")%>%html_attr("title")
@@ -46,7 +48,7 @@ tidyy<-lapply(podatki,function(x) {
   opis<-x%>%html_nodes("div")%>%html_text("class")
   
   return(data.frame(naziv,podjetje,datum,kraj,opis, stringsAsFactors = FALSE))
-  
+  }
   
   
 })
