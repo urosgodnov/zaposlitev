@@ -12,9 +12,11 @@ max<-regmatches(max, gregexpr("[[:digit:]]+", max))
 
 max<-as.numeric(max[[1]][[2]])
 
+
 podatki<-as.list(rep(NA, max*20))
 
 for (i in seq(from=1, to=max, by=1)) {
+  
   
   print(i)
   
@@ -36,11 +38,8 @@ for (i in seq(from=1, to=max, by=1)) {
 #Obdelava posameznih elementov
 tidyy<-lapply(podatki,function(x) {
   
-  print(x)
-  
-
-  if (!is.na(x)) {
-  
+   if (!is.na(x)) {
+    
   t<-x%>%html_nodes(".detail")%>%html_text()
   
   stran<-"mojedelo.si"
@@ -55,8 +54,20 @@ tidyy<-lapply(podatki,function(x) {
   opis<-x%>%html_nodes("p")%>%html_text("premiumDescription")
   
   opis<-ifelse(length(opis)>0,opis,"")
-  podrobno<-""
-  nedolocen<-"Ni podatka"
+
+  #dodatni opis
+  urlpodrobno<-x%>%html_attr("href")
+  urlpodrobno<-paste("https://www.mojedelo.com/",urlpodrobno,sep="")
+  
+  podrobno<-urlpodrobno %>% read_html()%>%html_nodes(".tplCntnAdCon")%>%html_text()
+  podrobno<-paste(podrobno, collapse = " ")
+  
+  nedolocen=ifelse(grepl("nedoločen",podrobno,ignore.case=TRUE),"Da",
+                   ifelse(grepl("\\bdoločen\\b",podrobno,ignore.case=TRUE),"Ne","Ni podatka"))
+
+  
+  
+  
   
   return(data.frame(stran,naziv,podjetje,datum,kraj,opis,podrobno,nedolocen, stringsAsFactors = FALSE))
   }

@@ -2,7 +2,19 @@ library(rvest)
 library(lubridate)
 library(xlsx)
 library(xml2)
+library(XML)
 library(dplyr)
+
+#funkcija za podrobno
+details<-function(url) {
+  
+  podrobno<-url%>% read_html()%>% html_nodes(".vsebina")%>%html_text()
+  podrobno<-gsub("\r"," ",podrobno)
+  podrobno<-gsub("\t","",podrobno)
+  podrobno<-gsub("\n","",podrobno)
+  podrobno<-paste(podrobno,collapse="")
+  return(podrobno)
+}
 
 dir.create(file.path("podatki"), showWarnings = FALSE)
 
@@ -25,15 +37,20 @@ start<-Sys.time()
                      x<-gsub("Ĺ[[:blank:]]", "Š", x)
                   }))
   
+ 
   data<-data%>%mutate(kraj=sub(".*Lokacija\\: *(.*?) *<br.*", "\\1", description))
   Sys.setlocale("LC_TIME", "English")
   data<-data%>%mutate(datum=as.Date(pubDate, "%a, %d %b %Y"))
   
   data<-data%>%mutate(podjetje=sub(".*Delodajalec\\: *(.*?) *<br.*", "\\1", description))
+  
+  data<-data%>%group_by(link)%>%mutate(podrobno=details(as.character(link)))%>%ungroup()
+  
+  
   data<-data%>%mutate(opis=sub(".*Opis del in nalog\\ *(.*?) ", "\\1", description),
-                      stran="zaposlitev.net", podrobno="",
-                      nedolocen=ifelse(grepl("nedoločen",description),"Da",
-                                        ifelse(grepl("\\bdoločen\\b",description),"Ne","Ni podatka")))
+                      stran="zaposlitev.net", 
+                      nedolocen=ifelse(grepl("nedoločen",podrobno,ignore.case=TRUE),"Da",
+                                        ifelse(grepl("\\bdoločen\\b",podrobno,ignore.case=TRUE),"Ne","Ni podatka")))
   
   
   
