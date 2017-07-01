@@ -23,7 +23,8 @@ podatki<-podatki%>%mutate(pogodba=ifelse(nedolocen=="Da","Nedoločen čas",ifels
                                                       pogodba=trimws(pogodba),
                                                       kraj=trimws(kraj),
                                                       naziv=trimws(naziv),
-                                                      podjetje=trimws(podjetje)
+                                                      podjetje=trimws(podjetje),
+                                                      stran=gsub("www.","",stran)
          )
 
 write.table(podatki, file = "Zaposlitev.txt", append = FALSE, quote = TRUE, sep = "|", row.names = FALSE)
