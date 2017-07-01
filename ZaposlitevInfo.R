@@ -14,6 +14,7 @@ max<-regmatches(max, gregexpr("[[:digit:]]+", max))
 
 max<-as.numeric(max[[1]][[4]])
 
+
 podatki<-as.list(rep(NA, max*10))
 
 for (i in seq(from=1, to=max, by=1)) {
@@ -37,7 +38,7 @@ for (i in seq(from=1, to=max, by=1)) {
   }
   
 }
-Sys.setlocale("LC_TIME", "English")
+#Sys.setlocale("LC_TIME", "English")
 
 #Obdelava posameznih elementov
 tidyy<-lapply(podatki,function(x) {
@@ -46,7 +47,6 @@ tidyy<-lapply(podatki,function(x) {
     
     print(x)
     
-
     
     t<-x%>%read_html()%>%html_node("#content")
     
@@ -59,8 +59,8 @@ tidyy<-lapply(podatki,function(x) {
     description<-description[1:4]
     datum<-t%>%html_nodes(".wpjb-top-header-subtitle")%>%html_text()
     datum<-gsub("Objavljeno:","",datum)
-    datum<-as.Date(datum, "%Y-%m-%d")  
-    nedolocen<-gsub("Vrsta zaposlitve ","",description[2])
+    datum<-as.Date(datum, "%d/%m/%Y")  
+
     
     
     kraj<-gsub("Lokacija ","",description[1])
@@ -72,6 +72,8 @@ tidyy<-lapply(podatki,function(x) {
     
     podrobno<-t%>%html_nodes(".wpjb-text-box")%>%html_text()
 
+    nedolocen<-ifelse(grepl("nedoločen",podrobno),"Da",
+                      ifelse(grepl("\\bdoločen\\b",podrobno),"Ne","Ni podatka"))
     
     return(data.frame(stran,naziv,podjetje,datum,kraj,opis,podrobno,nedolocen, stringsAsFactors = FALSE))
   }
