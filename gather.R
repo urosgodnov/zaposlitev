@@ -19,7 +19,12 @@ podatki_s=lapply(datoteke,function(x) {
 podatki=as.data.frame(try(do.call(rbind,podatki_s)))
 
 podatki<-podatki%>%mutate(pogodba=ifelse(nedolocen=="Da","Nedoločen čas",ifelse(nedolocen=="Ne","Določen čas",nedolocen)))%>%
-         select(-nedolocen)
+         select(-nedolocen,-opis,-podrobno)%>%mutate(
+                                                      pogodba=trimws(pogodba),
+                                                      kraj=trimws(kraj),
+                                                      naziv=trimws(naziv),
+                                                      podjetje=trimws(podjetje)
+         )
 
 write.table(podatki, file = "Zaposlitev.txt", append = FALSE, quote = TRUE, sep = "|", row.names = FALSE)
 
