@@ -1,5 +1,6 @@
 library(xlsx)
 library(dplyr)
+library(Hmisc)
 datoteke<- list.files(path="./podatki/", pattern="*.Rda", full.names=FALSE)
 datoteke<-gsub(".Rda","",datoteke)
 
@@ -21,7 +22,7 @@ podatki=as.data.frame(try(do.call(rbind,podatki_s)))
 podatki<-podatki%>%mutate(pogodba=ifelse(nedolocen=="Da","Nedoločen čas",ifelse(nedolocen=="Ne","Določen čas",nedolocen)))%>%
          select(-nedolocen,-opis,-podrobno)%>%mutate(
                                                       pogodba=trimws(pogodba),
-                                                      kraj=trimws(kraj),
+                                                      kraj=capitalize(tolower(trimws(kraj))),
                                                       naziv=trimws(naziv),
                                                       podjetje=trimws(podjetje),
                                                       stran=gsub("www.","",stran)
