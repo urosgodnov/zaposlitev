@@ -22,18 +22,19 @@ remDr$navigate(url)
 
 #
 # vse poklikam
-for (i in (1:5)) {
+for (i in (1:4)) {
   try(loadmorebutton <- remDr$findElement(using = 'css selector', ".load_more_jobs"))
   try(loadmorebutton$clickElement())
 
 # Wait for few seconds to get new results loaded
 
-Sys.sleep(1)
+Sys.sleep(2)
 }
 
 page_source<-remDr$getPageSource()
+t<-read_html(page_source[[1]])
 
-links<- read_html(page_source[[1]])%>%html_nodes(".single-work , .work-desc-inner")%>%
+links<- t%>%html_nodes(".job_listings")%>%
   html_nodes("a")%>%html_attr("href")
 
 links<-links[!links=="#"]
@@ -52,8 +53,6 @@ tidyy<-lapply(podatki,function(x) {
     counter <<- counter + 1
     
     print(counter)
-    
-    x<-podatki[[3]]
     
     t<-x%>%read_html()
     
