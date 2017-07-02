@@ -3,6 +3,7 @@ library(lubridate)
 library(xlsx)
 library(XML)
 library(RSelenium)
+library(dplyr)
 
 dir.create(file.path("podatki"), showWarnings = FALSE)
 
@@ -32,7 +33,7 @@ remDr$open()
 
 
 #Peljem se po podstraneh
-for (j in seq(from=1, to=1, by=1)) {
+for (j in seq(from=1, to=max, by=1)) {
 
 
   if (j==1)

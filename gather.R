@@ -28,6 +28,7 @@ podatki<-podatki%>%mutate(pogodba=ifelse(nedolocen=="Da","Nedoločen čas",ifels
                                                       stran=gsub("www.","",stran)
          )
 
+
 write.table(podatki, file = "Zaposlitev.txt", append = FALSE, quote = TRUE, sep = "|", row.names = FALSE)
 
 write.xlsx(podatki, file="Zaposlitev.xlsx",sheetName="Podatki")

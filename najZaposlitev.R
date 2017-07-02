@@ -21,7 +21,7 @@ remDr$navigate(url)
 
 
 #
-# 5x kliknem
+# vse poklikam
 for (i in (1:5)) {
   try(loadmorebutton <- remDr$findElement(using = 'css selector', ".load_more_jobs"))
   try(loadmorebutton$clickElement())
@@ -33,7 +33,7 @@ Sys.sleep(1)
 
 page_source<-remDr$getPageSource()
 
-links<- read_html(page_source[[1]])%>%html_nodes(".job_listings")%>%
+links<- read_html(page_source[[1]])%>%html_nodes(".single-work , .work-desc-inner")%>%
   html_nodes("a")%>%html_attr("href")
 
 links<-links[!links=="#"]
